@@ -7,7 +7,7 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 
-export default function BasicDemo() {
+export default function Shefing_pro() {
   const [data, setData] = useState([]);
   const [posts, setPosts] = useState([]);
   const [selectRow, setSelectRow] = useState(null);
@@ -19,17 +19,17 @@ export default function BasicDemo() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const handleNewPOstTitle = (e) => {
-    setNewPost_title(e.target.value);
-  };
 
+//useEffect to loading data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseUsers = await fetch('https://jsonplaceholder.typicode.com/users');
+//Read the user data
+const responseUsers = await fetch('https://jsonplaceholder.typicode.com/users');
         const userData = await responseUsers.json();
         setData(userData);
 
+//Read the posts data 
         const responsePosts = await fetch('https://jsonplaceholder.typicode.com/posts');
         const postsData = await responsePosts.json();
         setPosts(postsData);
@@ -45,6 +45,7 @@ export default function BasicDemo() {
     fetchData();
   }, []);
 
+//Function to add a new post
   const AddPost = async () => {
     try {
       const id = posts[posts.length - 1].id + 1;
@@ -55,7 +56,7 @@ export default function BasicDemo() {
         body: newPost_body,
         userId: 1,
       };
-
+//Create a new post with send a demo request
       const createPost = await fetch('https://jsonplaceholder.typicode.com/posts', {
         method: 'POST',
         body: JSON.stringify({
@@ -77,17 +78,21 @@ export default function BasicDemo() {
       console.error('Error adding new post:', error);
     }
   };
-
+  //Function for change the title in a new post
+    const handleNewPOstTitle = (e) => {
+      setNewPost_title(e.target.value);
+    };
+//Function to open the Sidebar with the specific user's posts
   const openPost = (id) => {
     const postsUser = posts.filter((element) => element.userId === id);
     setPostUser(postsUser);
     setVisibleRight(true);
   };
-
+//Footer that contain a button to save and cancle the new post.
   const footerContent = (
     <div>
       <Button
-        label="Cancel"
+        label="cancle"
         icon="pi pi-times"
         onClick={() => {
           setVisibleNewPost(false);
@@ -97,7 +102,7 @@ export default function BasicDemo() {
         className="p-button-text"
       />
       <Button
-        label="Save"
+        label="save"
         icon="pi pi-check"
         onClick={() => {
           AddPost();
@@ -110,12 +115,14 @@ export default function BasicDemo() {
     </div>
   );
 
+//All the Components
   return (
     <div className="card">
       {isLoading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
+      {error && <p>error: {error}</p>}
       {!isLoading && !error && (
         <>
+          {/* DataTable to view the user*/}
           <DataTable
             value={data}
             selectionMode="single"
@@ -138,24 +145,26 @@ export default function BasicDemo() {
             ></Column>
 
             <Column field="email" header="email" sortable filter style={{ width: '25%' }}></Column>
-            <Column field="company.name" header="Company" style={{ width: '25%' }}></Column>
+            <Column field="company.name" header="company" style={{ width: '25%' }}></Column>
           </DataTable>
 
+          {/* Sidebar with posts of a specific user */}
           {selectRow != null && (
             <Sidebar visible={visibleRight} position="right" style={{ width: '50%' }} onHide={() => setVisibleRight(false)}>
-              <h2> {selectRow.name}'s posts</h2>
+              <h2>Posts by {selectRow.name}</h2>
               <p>
                 <Button label="Create post" onClick={() => setVisibleNewPost(true)} />
                 <br></br>
                 <br></br>
                 <DataTable value={postUser} tableStyle={{ minWidth: '150rem' }}>
-                  <Column field="id" header="id" style={{ width: '5%' }}></Column>
-                  <Column field="title" header="title" style={{ width: '10%' }}></Column>
-                  <Column field="body" header="body" style={{ width: '85%' }}></Column>
+                  <Column field="id" header="ID" style={{ width: '5%' }}></Column>
+                  <Column field="title" header="Title" style={{ width: '10%' }}></Column>
+                  <Column field="body" header="Body" style={{ width: '85%' }}></Column>
                 </DataTable>
               </p>
             </Sidebar>
           )}
+          {/* Dialog for adding a new post */}
           <Dialog header="Add new post" visible={visibleNewPost} style={{ width: '50vw' }} onHide={() => setVisibleNewPost(false)} footer={footerContent}>
             <div className="card">
               <InputText
@@ -182,3 +191,4 @@ export default function BasicDemo() {
     </div>
   );
 }
+
